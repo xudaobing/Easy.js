@@ -662,7 +662,7 @@ if(typeof win.Ej === 'undefined'){
 	win.Ej = Ej;
 }else{
 	win.setEjWinName = function(name){
-		name && type(name) === 'string' && name.length && ( this[name] = Ej );
+		name && isString(name) && name.length && ( this[name] = Ej );
 	};
 };
 })(window);
