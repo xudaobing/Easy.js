@@ -173,8 +173,8 @@ Ej.extend({
 		if( typeof( support.matches ) !== 'undefined' ){
 			return elem[ support.matches ]( selector );
 		}else{
-			var _qsa = this.qsa(selector, elem.parentNode),
-				_i = _qsa.indexOf( elem );
+			var _qs_i = this.qsa(selector, elem.parentNode).indexOf( elem ),
+				_ch_i = toArray( elem.parentNode.children ).indexOf( elem );
 			_qsa = null;
 			return _i >= 0;
 		};
