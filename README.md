@@ -1,1 +1,1 @@
-# Easy.js
+# Easy.js --- 简易JavaScript库
