@@ -7,7 +7,6 @@ var _toString = Object.prototype.toString,
 	_cancelAni = w.cancelAnimationFrame || w.webkitCancelAnimationFrame ||  w.mozCancelAnimationFrame;
 function Touch( option ){
 	this.option = option && this.isObject( option ) ? option : {};
-	//console.log( this.option );
 	this.ts_Fun = this.t_Start.bind( this );
 	this.tm_Fun = this.t_Move.bind( this );
 	this.te_Fun = this.t_End.bind( this );
@@ -70,7 +69,6 @@ Touch.prototype.t_End = function(e){
 	this.isTE_L = this.te_info.x < this.ts_info.x ? true : false;
 	this.isTE_R = this.te_info.x > this.ts_info.x ? true : false;
 	this.option.touchEnd && this.isFunction( this.option.touchEnd ) && this.option.touchEnd.apply( this, arguments );
-
 };
 Touch.prototype.contains = function(parent, child){
 	if(parent && child && parent.compareDocumentPosition ){
