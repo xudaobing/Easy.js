@@ -2,7 +2,7 @@
  *
  * 2015-05-13
  *
- * first click
+ * fast click
  */
 var Tap = (function(){
 	var taps = [], _ts_info,
@@ -78,3 +78,4 @@ var Tap = (function(){
 		};
 	};
 }());
+
