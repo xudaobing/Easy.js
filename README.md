@@ -3,9 +3,9 @@
 数据类型
 Ej.type() => 返回数据类型字符串 undefined null string number array object function date regexp
 
-针对的数据判断 - 返回布尔值 false || true
-Ej.isUndefined
-Ej.isNull
++针对的数据判断 - 返回布尔值 false || true
++Ej.isUndefined
++Ej.isNull
 Ej.isString
 Ej.isNumber
 Ej.isBoolean
