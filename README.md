@@ -31,3 +31,28 @@
 		Ej.removeClass()
 		Ej.toggleClass()
 		Ej.replaceClass()
+
+## css
+		Ej.toDomStyle() => 'transform-style' -> 'transformStyle'
+		Ej.toCssStyle() => 'transformStyle' -> 'transform-style'
+		Ej.testCss() => 检测css3属性支持
+		Ej.getStyle() => 获取单个元素css值，argumets[0]如果是数组，获取数组第一个元素的css值
+		Ej.setStyle() => 设置css值；可以是多个元素，多对css+值：Ej.setStyle(elem,styleName,styleValue) || Ej.setStyle([elem01,elem02,...],{styleName:styleValue,..}); 
+
+## 事件
+		Ej.on() => 添加事件
+		Ej.off() => 移除事件
+		Ej.one() => 添加一次性事件
+
+## Ajax
+		Ej.Ajax() 
+		Ej.get()
+		Ej.post()
+		Ej.post()
+		Ej.getJSONP() => 跨域
+		Ej.toStr() => object 转 string 
+
+## Cookie
+		Ej.Cookie.set => 设置
+		Ej.Cookie.get => 获取
+		Ej.Cookie.del => 清除
