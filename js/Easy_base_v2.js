@@ -74,7 +74,7 @@ var cdiv = document.createElement('div'), style = cdiv.style, slice = Array.prot
 }());
 function Ej(selector, context){
 	if(!selector || !isString(selector) || !selector.length) return null;
-	var args = arguments, self = args.callee;
+	var self = arguments.callee;
 	if( /^#[\w-]+$/.exec( selector ) ) return self.qs(selector, context);
 	var rets = self.qsa(selector, context);
 	return rets.length ? ( rets.length === 1 ? rets[0] : rets ) : null;
