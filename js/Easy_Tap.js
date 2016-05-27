@@ -1,18 +1,11 @@
 /* Tap -- 快速点击
  *
- * 2015-05-13
+ * 2015-05-27
  *
  * fast click
  */
 var Tap = (function(){
-	var taps = [], _ts_info,
-		contains = function(parent, child){
-			if(parent && child && parent.compareDocumentPosition ){
-				var ret = parent.compareDocumentPosition( child );
-				return ret === 20 || ret === 0;
-			};
-			return false;
-		};
+	var taps = [], _ts_info;
 	window.addEventListener('touchstart', function(e){
 		var _ct = e.changedTouches[0];
 		_ts_info = {};
@@ -20,7 +13,6 @@ var Tap = (function(){
 		_ts_info.y = _ct.clientY;
 		_ts_info.t = new Date().getTime();
 	}, true);
-
 	function touchEnd(e){
 		var _args = arguments, _ct = e.changedTouches[0], _this = this;
 		if( Math.abs(_ct.clientX - _ts_info.x) < 15 && Math.abs(_ct.clientY - _ts_info.y) < 15 && new Date().getTime() - _ts_info.t < 150 ){
