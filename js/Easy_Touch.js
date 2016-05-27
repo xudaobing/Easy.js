@@ -1,5 +1,5 @@
 /*
-//Easy_Touch.js 2016-05-11
+* Easy_Touch.js update 2016-05-27
 */
 ;(function(w){
 var _toString = Object.prototype.toString,
@@ -23,9 +23,9 @@ Touch.prototype.init = function(){
 	this.option.init && this.isFunction( this.option.init ) && this.option.init.call( this );
 };
 Touch.prototype.addTouch = function(){
-	( this.option.isAddTouchStart != 0 && this.option.isAddTouchStart != false ) && w.addEventListener("touchstart", this.ts_Fun, false);
-	( this.option.isAddTouchMove != 0 && this.option.isAddTouchMove != false ) && w.addEventListener("touchmove", this.tm_Fun, false);
-	( this.option.isAddTouchEnd != 0 && this.option.isAddTouchEnd != false ) && w.addEventListener("touchend", this.te_Fun, false);
+	( this.option.addTouchStart !== 0 && this.option.addTouchStart !== false ) && w.addEventListener("touchstart", this.ts_Fun, false);
+	( this.option.addTouchMove !== 0 && this.option.addTouchMove !== false ) && w.addEventListener("touchmove", this.tm_Fun, false);
+	( this.option.addTouchEnd !== 0 && this.option.addTouchEnd !== false ) && w.addEventListener("touchend", this.te_Fun, false);
 };
 Touch.prototype.t_Start = function(e){
 	this.deleteDirection();
@@ -73,7 +73,7 @@ Touch.prototype.t_End = function(e){
 Touch.prototype.contains = function(parent, child){
 	if(parent && child && parent.compareDocumentPosition ){
 		var ret = parent.compareDocumentPosition( child );
-		return ret === 20 || ret === 0 || false;
+		return ret === 20 || ret === 0;
 	};
 	return false;
 };
@@ -95,11 +95,6 @@ Touch.prototype.deleteDirection = function(){
 };
 /*- end -*/
 
-if( typeof w.Ej !== 'undefined' && w.Ej.extend ){
-	Ej.extend('Touch', Touch);
-}else{
-	w.Touch = Touch;
-};
-
+w.Touch = Touch;
 
 }(window));

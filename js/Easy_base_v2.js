@@ -428,7 +428,7 @@ Ej.extend({
 	},
 	getJSONP : function(url, data, callBack){
 		if(!arguments.length) return;
-		url += ( url.indexOf('?') != -1 ? '&' : '?' ) + this.toStr(data);
+		url += ( url.indexOf('?') != -1 ? '&' : '?' ) + this.toDataString(data);
 		this.load(url, function(){
 			this.parentNode.removeChild(this);
 			isFunction(callBack) && callBack.apply(this, arguments);
