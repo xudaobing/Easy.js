@@ -24,14 +24,22 @@ var cdiv = document.createElement('div'), style = cdiv.style, slice = Array.prot
 	isWindow = function(o){return o && o === o.window;},
 	each = function(o, c){
 		if( !o || !isFunction(c) ) return;
-		var isArr = isArray(o),i = 0,
-			len,k,v,oks;
-		!isArr && ( oks = Object.keys(o) );
-		len = isArr ? o.length : oks.length
-		for(;i < len;i++){
-			k = isArr ? i : oks[i]; v = o[k];
-			if( c.call(o,k,v) === false ) break;
+		var isArr = isArray(o), isObj = isObject(o), len, oks;
+		if( isArr )len = o.length;
+		if( isObj ){
+			oks = Object.keys(o);
+			len = oks.length;
 		};
+		if( len && len > 0){
+			var i = 0, k, v;
+			for(; i < len; i++){
+				k = isArr ? i : oks[i];
+				v = o[k];
+				if( c.call(o,k,v) === false ) break;
+			};
+			return;
+		};
+		c.call(o);
 	},
 	toArray = function(o){return isArray(o) ? o : ( isLikeArray(o) ? slice.call(o) : [] );},
 	toDomStyle = function(cssStyle){return isString(cssStyle) && cssStyle.replace(/\-[a-z]/g,function(m) { return m.charAt(1).toUpperCase(); });},
