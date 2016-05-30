@@ -431,7 +431,7 @@ Ej.extend({
 		url += ( url.indexOf('?') != -1 ? '&' : '?' ) + this.toDataString(data);
 		this.load(url, function(){
 			this.parentNode.removeChild(this);
-			isFunction(callBack) && callBack.apply(this, arguments);
+			isFunction(callBack) && callBack(data);
 		},'script');
 	}
 });
