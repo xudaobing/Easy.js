@@ -85,7 +85,7 @@ function Ej(selector, context){
 	var self = arguments.callee;
 	if( /^#[\w-]+$/.exec( selector ) ) return self.qs(selector, context);
 	var rets = self.qsa(selector, context);
-	return rets.length ? ( rets.length === 1 ? rets[0] : rets ) : null;
+	return rets.length ? rets : null;
 };
 Ej.extend = function(){
 	var args = arguments,len = args.length,_this = this;
