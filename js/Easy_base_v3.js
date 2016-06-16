@@ -415,7 +415,7 @@ Ej.extend('Cookie', {
 		var str = name + '=' + value + '; ';
 		if(option && (option.hour || option.hour == 0) ){
 			var expire = new Date();
-			expire.setTime(new Date().getTime() + 3600000 * hour);
+			expire.setTime(new Date().getTime() + 3600000 * option.hour);
 			str += 'expires=' + expire.toGMTString() + '; ';
 		};
 		str += 'path=' + ( (option && option.path) ? option.path : w.location.pathname ) + '; ';
