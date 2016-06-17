@@ -1,5 +1,5 @@
 /*
-* 2016-06-15
+* 2016-06-17
 * IE8+
 */
 
@@ -10,52 +10,53 @@ var cdiv = document.createElement('div'), style = cdiv.style,
 	toString = Object.prototype.toString, userAgent = w.navigator.userAgent;
 
 /*- 设备、数据类型 Type模块 -*/
-var T = function(o){
-		var rets = /^\[object\s([a-zA-Z]+)\]$/ig.exec( toString.call(o) );
-		return rets && rets[1];
+var Type = {};
+	Type.is = function(o, type){
+		var rets = toString.call( o ).match(/\w+/g);
+		return rets && (typeof type === 'string' ? type === rets[1] : rets[1]);
 	};
-	T.device = (function(){
-		var ret = /(iphone|ipad|mac|android)+/ig.exec( userAgent );
-		return ret ? ret[1] : 'other';
+	(function(){
+		var ret = userAgent.match(/iphone|ipad|mac|android/i);
+		Type.device = ret ? ret[0] : 'other';
 	}());
-	T.isWeiXin = !!userAgent.match(/micromessenger/i);
-	T.isUndefined = function(o){
-		return typeof o === 'undefined' || T(o) === 'Undefined';
+	Type.isWeiXin = !!userAgent.match(/micromessenger/i);
+	Type.isUndefined = function(o){
+		return typeof o === 'undefined' || this.is(o, 'Undefined');
 	};
-	T.isNull = function(o){
-		return o === null || T(o) === 'Null';
+	Type.isNull = function(o){
+		return o === null || this.is(o, 'Null');
 	};
-	T.isString = function(o){
-		return o === '' || typeof o === 'string' || T(o) === 'String';
+	Type.isString = function(o){
+		return o === '' || typeof o === 'string' || this.is(o, 'String');
 	};
-	T.isNumber = function(o){
-		return o === 0 || typeof o === 'number' || T(o) === 'Number';
+	Type.isNumber = function(o){
+		return o === 0 || typeof o === 'number' || this.is(o, 'Number');
 	};
-	T.isBoolean = function(o){
-		return o === true || o === false || T(o) === 'Boolean';
+	Type.isBoolean = function(o){
+		return o === true || o === false || this.is(o, 'Boolean');
 	};
-	T.isArray = function(o){
-		return o && ( o instanceof Array || T(o) === 'Array');
+	Type.isArray = function(o){
+		return o && this.is(o, 'Array');
 	};
-	T.isLikeArray = function(o){
+	Type.isLikeArray = function(o){
 		return o && ( this.isArray(o) || (typeof o === 'object' && 'length' in o && o.length >= 0) );
 	};
-	T.isObject = function(o){
-		return o && ( o instanceof Object || T(o) === 'Object' );
+	Type.isObject = function(o){
+		return o && this.is(o, 'Object');
 	};
-	T.isFunction = function(o){
-		return o && ( o instanceof Function || T(o) === 'Function' );
+	Type.isFunction = function(o){
+		return o && this.is(o, 'Function');
 	};
-	T.isDate = function(o){
-		return o && (o instanceof Date || T(o) === 'Date');
+	Type.isDate = function(o){
+		return o && this.is(o, 'Date');
 	};
-	T.isRegExp = function(o){
-		return o && (o instanceof RegExp || T(o) === 'RegExp');
+	Type.isRegExp = function(o){
+		return o && this.is(o, 'RegExp');
 	};
-	T.isElement = function(o){
+	Type.isElement = function(o){
 		return o && typeof o === 'object' && Element.prototype.isPrototypeOf(o) && o.nodeType ===1 && this.isString( o.nodeName );
 	};
-	T.isWindow = function(o){
+	Type.isWindow = function(o){
 		return o && o === o.window;
 	};
 
@@ -67,8 +68,8 @@ var	keys = Object.keys || function( o ){
 		return rets;
 	},
 	each = function(o, c){
-		if( !o || !T.isFunction(c) ) return;
-		var isArr = T.isArray(o), isObj = T.isObject(o), len, oks;
+		if( !o || !Type.isFunction(c) ) return;
+		var isArr = Type.isArray(o), isObj = Type.isObject(o), len, oks;
 		if( isArr )len = o.length;
 		if( isObj ){
 			oks = keys(o);
@@ -84,7 +85,7 @@ var	keys = Object.keys || function( o ){
 		};
 	},
 	toArray = function(o){
-		if( T.isLikeArray(o) && o.length){
+		if( Type.isLikeArray(o) && o.length){
 			try{
 				return slice.call(o);
 			}catch(e){
@@ -96,7 +97,7 @@ var	keys = Object.keys || function( o ){
 		return [];
 	},
 	indexOf = Array.prototype.indexOf || function(value){
-		if( T.isArray( this ) ){
+		if( Type.isArray( this ) ){
 			var ret = -1;
 			each(this, function(i, v){
 				if(v === value) ret = i;
@@ -108,7 +109,7 @@ var	keys = Object.keys || function( o ){
 	},
 	filter = Array.prototype.filter || function(fn){
 		var rets = [];
-		if( T.isArray(this) ){
+		if( Type.isArray(this) ){
 			each(this,function(i, v){
 				if( fn(v, i) ) rets.push(v);
 			});
@@ -116,14 +117,14 @@ var	keys = Object.keys || function( o ){
 		return rets;
 	},
 	toDomStyle = function(s){
-		return T.isString(s) && s.replace(/\-[a-z]/g, function(m){return m.charAt(1).toUpperCase();} );
+		return Type.isString(s) && s.replace(/\-[a-z]/g, function(m){return m.charAt(1).toUpperCase();} );
 	},
 	toCssStyle = function(s){
-		return T.isString(s) && s.replace(/[A-Z]/g, function(m){return '-'+m.toLowerCase();} );
+		return Type.isString(s) && s.replace(/[A-Z]/g, function(m){return '-'+m.toLowerCase();} );
 	},
 	testCss = function(s){
 		s = toDomStyle(s);
-		if(!s || !T.isString(s) || !s.length)return false;
+		if(!s || !Type.isString(s) || !s.length)return false;
 		if(s in style) return s;
 		var vds = ['O', 'ms' ,'Moz' ,'webkit'], ret = false;
 		s = s.charAt(0).toUpperCase() + s.substr(1);
@@ -157,7 +158,7 @@ var	keys = Object.keys || function( o ){
 }());
 
 function Ej(selector, context){
-	if(!T.isString(selector) || !selector.length) return null;
+	if(!Type.isString(selector) || !selector.length) return null;
 	var self = arguments.callee;
 	if( /^#[\w-]+$/.exec( selector ) ) return self.qs(selector, context);
 	var rets = self.qsa(selector, context);
@@ -166,14 +167,14 @@ function Ej(selector, context){
 Ej.extend = function(){
 	var args = arguments,len = args.length,_this = this;
 	if(!len) return;
-	if(len === 1 && T.isObject( args[0] ) ){
+	if(len === 1 && Type.isObject( args[0] ) ){
 		each(args[0], function(k, v){
 			_this[k] = v;
 		});
 	};
-	if(len === 2 && T.isString( args[0] ) && args[0].length ){
-		if(typeof this[ args[0] ] === 'undefined') this[ args[0] ] = T.isObject( args[1] ) ? {} : null;
-		if( !T.isObject( args[1] ) ){
+	if(len === 2 && Type.isString( args[0] ) && args[0].length ){
+		if(typeof this[ args[0] ] === 'undefined') this[ args[0] ] = Type.isObject( args[1] ) ? {} : null;
+		if( !Type.isObject( args[1] ) ){
 			this[ args[0] ] = args[1];
 		}else{
 			each(args[1], function(k, v){
@@ -187,30 +188,30 @@ Ej.extend = function(){
 var classList = {};
 if( 'classList' in cdiv ){
 	classList.hasClass = function(d, s){
-		if( T.isElement(d) && T.isString(s) && s.length ) return d.classList.contains( s );
+		if( Type.isElement(d) && Type.isString(s) && s.length ) return d.classList.contains( s );
 	};
 	classList.addClass = function(d, s){
-		if( T.isElement(d) && this.hasClass(d, s) === false ) d.classList.add( s );
+		if( Type.isElement(d) && this.hasClass(d, s) === false ) d.classList.add( s );
 	};
 	classList.removeClass = function(d, s){
-		if( T.isElement(d) && this.hasClass(d, s) === true ) d.classList.remove( s );
+		if( Type.isElement(d) && this.hasClass(d, s) === true ) d.classList.remove( s );
 	};
 }else{
 	classList.hasClass = function(d, s){
-		if( T.isElement(d) && T.isString(s) && s.length )return !!d.className.match( new RegExp("(\\s|^)"+ s +"(\\s|$)") );
+		if( Type.isElement(d) && Type.isString(s) && s.length )return !!d.className.match( new RegExp("(\\s|^)"+ s +"(\\s|$)") );
 	};
 	classList.addClass = function(d, s){
-		if( T.isElement(d) && this.hasClass(d, s) === false ) d.className += ' ' + s;
+		if( Type.isElement(d) && this.hasClass(d, s) === false ) d.className += ' ' + s;
 	};
 	classList.removeClass = function(d, s){
-		if( T.isElement(d) && this.hasClass(d, s) === true ) d.className = d.className.replace(new RegExp("(\\s|^)"+ s +"(\\s|$)"),' ');
+		if( Type.isElement(d) && this.hasClass(d, s) === true ) d.className = d.className.replace(new RegExp("(\\s|^)"+ s +"(\\s|$)"),' ');
 	};
 };
 classList.toggleClass = function(d, s){
-	if( T.isElement(d) ) this[ this.hasClass(d, s) === false ? 'addClass' : 'removeClass' ](d, s);
+	if( Type.isElement(d) ) this[ this.hasClass(d, s) === false ? 'addClass' : 'removeClass' ](d, s);
 };
 classList.replaceClass = function(d, os, ns){
-	if( T.isElement(d) ){
+	if( Type.isElement(d) ){
 		this.hasClass(d, os) === true && this.removeClass(d, os);
 		this.hasClass(d, ns) === false && this.addClass(d, ns);
 	};
@@ -223,7 +224,7 @@ var event = {},
 	removeEvent = isAddEventListener ? 'removeEventListener' : 'detachEvent',
 	typePrefix = isAddEventListener ? '' : 'on',
 	testAgrs = function(dm, fn){
-		return dm && ( dm === d || T.isWindow(dm) || T.isElement(dm) ) && T.isFunction( fn );
+		return dm && ( dm === d || Type.isWindow(dm) || Type.isElement(dm) ) && Type.isFunction( fn );
 	};
 
 event.on = function(dm, type, handler, useCapture){
@@ -236,13 +237,13 @@ event.one = function(dm, type, handler, useCapture){
 	var _this = this;
 	this.on(dm, type, function(){
 		_this.off(dm, type, arguments.callee, useCapture);
-		T.isFunction(handler) && handler.apply(dm, arguments);
+		Type.isFunction(handler) && handler.apply(dm, arguments);
 	}, useCapture);
 };
 if( isAddEventListener ){
 	event.ready = function(callback, self){
 		this.one(d, "DOMContentLoaded", function(){
-			T.isFunction( callback ) && callback.call( self || w);
+			Type.isFunction( callback ) && callback.call( self || w);
 		}, false);
 	};
 }else{
@@ -250,17 +251,16 @@ if( isAddEventListener ){
 		d.onreadystatechange = function(){
 			if( d.readyState == 'complete' ){
 				d.onreadystatechange = null;
-				T.isFunction( callback ) && callback.call( self || w);
+				Type.isFunction( callback ) && callback.call( self || w);
 			}
 		}
 	};
 };
 
-Ej.extend( T );
+Ej.extend( Type );
 Ej.extend({
 	toString : toString,
 	userAgent: userAgent,
-	type : T,
 	keys : keys,
 	each : each,
 	indexOf : indexOf,
@@ -274,10 +274,10 @@ Ej.extend( support );
 Ej.extend( classList );
 Ej.extend( event );
 Ej.extend({
-	qs : function(s, c){return (T.isElement(c)?c:d).querySelector(s);},
-	qsa : function(s, c){return toArray( (T.isElement(c)?c:d).querySelectorAll(s) );},
+	qs : function(s, c){return (Type.isElement(c)?c:d).querySelector(s);},
+	qsa : function(s, c){return toArray( (Type.isElement(c)?c:d).querySelectorAll(s) );},
 	matches : function(d, s){
-		if(T.isElement(d) && T.isString(s) && s.length){
+		if(Type.isElement(d) && Type.isString(s) && s.length){
 			if( typeof( support.matches ) !== 'undefined' ){
 				return d[ support.matches ]( s );
 			}else{
@@ -287,12 +287,12 @@ Ej.extend({
 		};
 	},
 	siblings : function(d, s){
-		if( !T.isElement(d) ) return null;
+		if( !Type.isElement(d) ) return null;
 		var childs = toArray( d.parentNode.children ), rets = [], _this = this;
 		each(childs, function(i, v){
-			if( T.isElement(v) && v !== d ) rets.push(v);
+			if( Type.isElement(v) && v !== d ) rets.push(v);
 		});
-		if( T.isString(s) && s.length ){
+		if( Type.isString(s) && s.length ){
 			rets = filter.call(rets, function(d){
 				return _this.matches(d, s);
 			});
@@ -302,9 +302,9 @@ Ej.extend({
 	create : function(s, o){
 		if(!arguments.length) return d.createDocumentFragment();
 		var _this = this, dm = null;
-		if( T.isElement(s) ) dm = s;
-		if( T.isString(s) && s.length ) dm = d.createElement( s );
-		if( T.isElement(dm) && T.isObject(o) ){
+		if( Type.isElement(s) ) dm = s;
+		if( Type.isString(s) && s.length ) dm = d.createElement( s );
+		if( Type.isElement(dm) && Type.isObject(o) ){
 			each(o, function(k, v){
 				if(k in dm){
 					dm[k] = v;
@@ -318,10 +318,10 @@ Ej.extend({
 		return dm;
 	},
 	remove : function(d){
-		return T.isElement(d) && T.isElement(d.parentNode) && d.parentNode.removeChild(d);
+		return Type.isElement(d) && Type.isElement(d.parentNode) && d.parentNode.removeChild(d);
 	},
 	contains : function(parent, child, containSelf){
-		if(!T.isElement(parent) || !T.isElement(child) ) return false;
+		if(!Type.isElement(parent) || !Type.isElement(child) ) return false;
 		if( (containSelf === 0 || containSelf === false) && parent === child) return false;
 		if(parent.compareDocumentPosition){
 			var _res = parent.compareDocumentPosition( child );
@@ -332,7 +332,7 @@ Ej.extend({
 	},
 	index : function(dm, arr){
 		var _this = this, ret = -1;
-		if(!T.isElement(dm) || !T.isArray(arr) || !arr.length) return ret;
+		if(!Type.isElement(dm) || !Type.isArray(arr) || !arr.length) return ret;
 		each(arr, function(i, v){
 			if(dm === v || _this.contains(v, dm) ){
 				ret = i;
@@ -343,14 +343,14 @@ Ej.extend({
 	},
 	css : function(){
 		var args = arguments, len = args.length, self = args.callee;
-		if( !len || !T.isElement(args[0]) ) return;
-		if( T.isObject( args[1] ) ){
+		if( !len || !Type.isElement(args[0]) ) return;
+		if( Type.isObject( args[1] ) ){
 			each(args[1], function(k, v){
 				self(args[0], k ,v);
 			});
 			return;
 		};
-		if( T.isString( args[1] ) ){
+		if( Type.isString( args[1] ) ){
 			var dm = args[0], ds = args[1];
 			if( ds === "float" ) ds = "cssFloat";
 			ds = toDomStyle(ds);
@@ -360,20 +360,20 @@ Ej.extend({
 		};
 	},
 	isHidden : function(dm){
-		return T.isElement(dm) && this.css(dm, 'display').toLowerCase() === 'none';
+		return Type.isElement(dm) && this.css(dm, 'display').toLowerCase() === 'none';
 	},
 	requestAni : function( fun ){
-		if( T.isFunction(fun) ) return support.isrequestAni ? support.isrequestAni.call(w, fun) : w.setTimeout(fun, 1000 / 60);
+		if( Type.isFunction(fun) ) return support.isrequestAni ? support.isrequestAni.call(w, fun) : w.setTimeout(fun, 1000 / 60);
 	},
 	cancelAni : function( id ){
 		if(id) return support.iscancelAni ? support.iscancelAni.call(w, id) : w.clearTimeout( id );
 	},
 	show : function( dm ){ //dm, time, isScale, callback
-		if( !T.isElement(dm) || !this.isHidden(dm) ) return;
+		if( !Type.isElement(dm) || !this.isHidden(dm) ) return;
 		var _this = this, args = arguments, len = args.length;
-		var time = len > 1 && T.isString( args[1] ) && time.length > 2 ? args[1] : '400ms';
+		var time = len > 1 && Type.isString( args[1] ) && time.length > 2 ? args[1] : '400ms';
 		var isScale = len > 1 && ( args[1] === 0 || args[1] === false || args[2] === 0 || args[2] === false ) ? false : true;
-		var callback = len > 1 && T.isFunction( args[len-1] ) ? args[ len-1 ] : false;
+		var callback = len > 1 && Type.isFunction( args[len-1] ) ? args[ len-1 ] : false;
 		this.css(dm,'display','block');
 		if( support.isTransitionEnd ){
 			this.css(dm, {'opacity':0,'transform':'translate3d(0,0,0) scale(1'+(isScale?'.1':'')+')'});
@@ -389,11 +389,11 @@ Ej.extend({
 		callback && callback.call(dm);
 	},
 	hide : function( dm ){//dm, time, isScale, callback
-		if( !T.isElement(dm) || this.isHidden(dm) ) return;
+		if( !Type.isElement(dm) || this.isHidden(dm) ) return;
 		var _this = this, args = arguments, len = args.length;
-		var time = len > 1 && T.isString( args[1] ) && time.length > 2 ? args[1] : '400ms';
+		var time = len > 1 && Type.isString( args[1] ) && time.length > 2 ? args[1] : '400ms';
 		var isScale = len > 1 && ( args[1] === 0 || args[1] === false || args[2] === 0 || args[2] === false ) ? false : true;
-		var callback = len > 1 && T.isFunction( args[len-1] ) ? args[ len-1 ] : false;
+		var callback = len > 1 && Type.isFunction( args[len-1] ) ? args[ len-1 ] : false;
 		if( support.isTransitionEnd ){
 			_this.one(dm, support.isTransitionEnd, function(){
 				_this.css(dm,{'display':'none','transition-duration':'0ms','opacity':1,'transform':'translate3d(0,0,0) scale(1)'});
@@ -410,8 +410,8 @@ Ej.extend({
 /*- Cookie-*/
 Ej.extend('Cookie', {
 	set : function(name, value, option){
-		if( !T.isString(name) || T.isUndefined(value) ) return false;
-		if( T.isArray(value) || T.isObject(value) ) value = JSON.stringify( value );
+		if( !Type.isString(name) || Type.isUndefined(value) ) return false;
+		if( Type.isArray(value) || Type.isObject(value) ) value = JSON.stringify( value );
 		var str = name + '=' + value + '; ';
 		if(option && (option.hour || option.hour == 0) ){
 			var expire = new Date();
@@ -419,7 +419,7 @@ Ej.extend('Cookie', {
 			str += 'expires=' + expire.toGMTString() + '; ';
 		};
 		str += 'path=' + ( (option && option.path) ? option.path : w.location.pathname ) + '; ';
-		str += 'domain=' + ( (option && option.host) ? option.host : w.location.host ) + ';';
+		str += 'domain=' + ( (option && option.domain) ? option.domain : w.location.host ) + ';';
 		d.cookie = str;
 	    return true;
 	},
@@ -438,7 +438,7 @@ Ej.extend({
 	Ajax : function(method, url, data, callback){
 		if(!arguments.length) return;
 		data = this.toDataString(data);
-		method = T.isString(method) && 'GET' === method.toUpperCase() ? 'GET' : 'POST';
+		method = Type.isString(method) && 'GET' === method.toUpperCase() ? 'GET' : 'POST';
 		if(method === 'GET' && data && data.length) url += ( url.indexOf('?') != -1 ? '&' : '?' ) + data;
 		var xhr = new XMLHttpRequest();
 		xhr.open(method, url);
@@ -447,7 +447,7 @@ Ej.extend({
 		xhr.onreadystatechange = function(){
 			if(this.readyState == 4 && this.status == 200){
 				this.onreadystatechange = null;
-				if( T.isFunction(callback) ){
+				if( Type.isFunction(callback) ){
 					var type = this.getResponseHeader("Content-Type");
 					if( type === "application/json" ){
 						callback( JSON.parse(this.responseText) );
@@ -470,9 +470,9 @@ Ej.extend({
 	},
 	load : function(){ //url, tag, callback
 		var args = arguments, len = args.length;
-		if( !len || !T.isString( args[0] ) ) return;
+		if( !len || !Type.isString( args[0] ) ) return;
 		var tag;
-		len > 0 && T.isString( args[1] ) && args[1].length && ( tag = args[1] );
+		len > 0 && Type.isString( args[1] ) && args[1].length && ( tag = args[1] );
 		if( typeof tag === 'undefined' ){
 			!!args[0].match(/.(jpg|png|gif|webp)$/i) && ( tag = 'img' );
 			!!args[0].match(/.(js)$/i) && ( tag = 'script' );
@@ -482,7 +482,7 @@ Ej.extend({
 			dm.onload = dm.onreadystatechange = function(e){
 				if( (e && e.type == 'load') || this.readyState == 'loaded' || this.readyState == 'complete' ){
 					tag = this.onload = this.onreadystatechange = null;
-					T.isFunction( args[ len-1 ] ) && args[ len-1 ].apply(this, arguments);
+					Type.isFunction( args[ len-1 ] ) && args[ len-1 ].apply(this, arguments);
 				}
 			}
 			tag.toLowerCase() === 'script' && ( d.body.appendChild( dm ) );
@@ -490,21 +490,21 @@ Ej.extend({
 	},
 	toDataString : function(){
 		var args = arguments, len = args.length, self = args.callee;
-		if( len == 1 && T.isObject(args[0]) ){
+		if( len == 1 && Type.isObject(args[0]) ){
 			var rets = [];
 			each(args[0], function(k, v){
 				rets.push( self(k, v) );
 			});
 			return rets.join('&');
 		};
-		if( len == 2 && T.isString(args[0]) ){
+		if( len == 2 && Type.isString(args[0]) ){
 			var _k = args[0],
 				_v = args[1];
-			if( T.isNumber(_v) || T.isString(_v) ) return encodeURIComponent( _k ) + '=' + encodeURIComponent( _v );
-			if( T.isNull(_v) || T.isUndefined(_v) ) return encodeURIComponent( _k ) + '=';
-			if( T.isBoolean(_v) ) return encodeURIComponent( _k ) + '=' + ( _v ? 'true' : 'false');
-			if( T.isFunction(_v) )  return encodeURIComponent( _k ) + '=undefined';
-			if( T.isArray(_v) || T.isObject(_v) ){
+			if( Type.isNumber(_v) || Type.isString(_v) ) return encodeURIComponent( _k ) + '=' + encodeURIComponent( _v );
+			if( Type.isNull(_v) || Type.isUndefined(_v) ) return encodeURIComponent( _k ) + '=';
+			if( Type.isBoolean(_v) ) return encodeURIComponent( _k ) + '=' + ( _v ? 'true' : 'false');
+			if( Type.isFunction(_v) )  return encodeURIComponent( _k ) + '=undefined';
+			if( Type.isArray(_v) || Type.isObject(_v) ){
 				var _v_Arr = [];
 				each(_v, function(k, v){
 					_v_Arr.push( self(_k+'['+k+']', v) );
@@ -519,7 +519,7 @@ Ej.extend({
 		url += ( url.indexOf('?') != -1 ? '&' : '?' ) + this.toDataString(data);
 		this.load(url, 'script', function(){
 			this.parentNode.removeChild(this);
-			T.isFunction(callBack) && callBack(data);
+			Type.isFunction(callBack) && callBack(data);
 		},'script');
 	}
 });
