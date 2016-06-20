@@ -1,6 +1,8 @@
-# Easy.js --- 简易JavaScript库
+# Easy_base_v3.js --- 简易JavaScript库
+## 2016-06-20
 
-## 数据类型 Undefined Null String Number Array Object Function Date Regexp
+## 数据类型
+		Undefined Null String Number Array Object Function Date Regexp
 		Ej.type() => 返回数据类型字符串
 		Ej.is(o,string);//判断数据 o === string,返回布尔值 
 
@@ -24,7 +26,6 @@
 		Ej(selector, parent);
 		Ej.qs() => 选择单个元素
 		Ej.qsa() => 选择多个元素
-		//Ej() || Ej().find() => 选择多个元素，Ej对象，继承Ej prototype属性
 
 ## DOM
 		Ej.create(string, option); // 创建DOM，option => 添加dom属性、css属性 或 data-*
@@ -44,9 +45,7 @@
 ## css
 		Ej.toDomStyle() => 'transform-style' -> 'transformStyle'
 		Ej.toCssStyle() => 'transformStyle' -> 'transform-style'
-		Ej.testCss() => 检测css3属性支持
-		//Ej.getStyle() => 获取单个元素css值，argumets[0]如果是数组，获取数组第一个元素的css值
-		//Ej.setStyle() => 设置css值；可以是多个元素，多对css+值：Ej.setStyle(elem,styleName,styleValue) || Ej.setStyle([elem01,elem02,...],{styleName:styleValue,..}); 
+		Ej.testCss() => 检测css3属性支持 
 		Ej.css();
 		Ej.css(dom, 'cssName');//返回css属性值
 		Ej.css(dom, 'cssName', 'cssValue') || Ej.css(dom, {'cssName':'cssValue',...});//设置css属性值
