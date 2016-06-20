@@ -368,12 +368,14 @@ Ej.extend({
 	cancelAni : function( id ){
 		if(id) return support.iscancelAni ? support.iscancelAni.call(w, id) : w.clearTimeout( id );
 	},
-	show : function( dm ){ //dm, time, isScale, callback
-		if( !Type.isElement(dm) || !this.isHidden(dm) ) return;
-		var _this = this, args = arguments, len = args.length;
-		var time = len > 1 && Type.isString( args[1] ) && time.length > 2 ? args[1] : '400ms';
-		var isScale = len > 1 && ( args[1] === 0 || args[1] === false || args[2] === 0 || args[2] === false ) ? false : true;
-		var callback = len > 1 && Type.isFunction( args[len-1] ) ? args[ len-1 ] : false;
+	show : function( dm, option ){ //dm, option:time、isScale、callback
+		if( !this.isElement(dm) || !this.isHidden(dm) ) return;
+		var _this = this, time = '400ms', isScale = true, callback = false;
+		if( this.isObject( option ) ){
+			/^[\d.]+[s|ms]+$/.test( option.time ) && ( time = option.time );
+			( option.isScale === 0 || option.isScale === false) && ( isScale = false );
+			this.isFunction( option.callback ) && ( callback = option.callback );
+		};
 		this.css(dm,'display','block');
 		if( support.isTransitionEnd ){
 			this.css(dm, {'opacity':0,'transform':'translate3d(0,0,0) scale(1'+(isScale?'.1':'')+')'});
@@ -388,12 +390,14 @@ Ej.extend({
 		};
 		callback && callback.call(dm);
 	},
-	hide : function( dm ){//dm, time, isScale, callback
-		if( !Type.isElement(dm) || this.isHidden(dm) ) return;
-		var _this = this, args = arguments, len = args.length;
-		var time = len > 1 && Type.isString( args[1] ) && time.length > 2 ? args[1] : '400ms';
-		var isScale = len > 1 && ( args[1] === 0 || args[1] === false || args[2] === 0 || args[2] === false ) ? false : true;
-		var callback = len > 1 && Type.isFunction( args[len-1] ) ? args[ len-1 ] : false;
+	hide : function( dm, option ){//dm, option:time、isScale、callback
+		if( !this.isElement(dm) || this.isHidden(dm) ) return;
+		var _this = this, time = '400ms', isScale = true, callback = false;
+		if( this.isObject( option ) ){
+			/^[\d.]+[s|ms]+$/.test( option.time ) && ( time = option.time );
+			( option.isScale === 0 || option.isScale === false) && ( isScale = false );
+			this.isFunction( option.callback ) && ( callback = option.callback );
+		};
 		if( support.isTransitionEnd ){
 			_this.one(dm, support.isTransitionEnd, function(){
 				_this.css(dm,{'display':'none','transition-duration':'0ms','opacity':1,'transform':'translate3d(0,0,0) scale(1)'});
