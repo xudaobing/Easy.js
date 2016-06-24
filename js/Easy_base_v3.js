@@ -54,7 +54,7 @@ var Type = {};
 		return o && this.is(o, 'RegExp');
 	};
 	Type.isElement = function(o){
-		return o && typeof o === 'object' && Element.prototype.isPrototypeOf(o) && o.nodeType ===1 && this.isString( o.nodeName );
+		return o && typeof o === 'object' && Element.prototype.isPrototypeOf(o) && o.nodeType === 1 && this.isString( o.nodeName );
 	};
 	Type.isWindow = function(o){
 		return o && o === o.window;
@@ -85,6 +85,7 @@ var	keys = Object.keys || function( o ){
 		};
 	},
 	toArray = function(o){
+		if( Type.isArray(o) ) return o;
 		if( Type.isLikeArray(o) && o.length){
 			try{
 				return slice.call(o);
@@ -165,7 +166,7 @@ function Ej(selector, context){
 	return rets.length ? rets : null;
 };
 Ej.extend = function(){
-	var args = arguments,len = args.length,_this = this;
+	var args = arguments, len = args.length, _this = this;
 	if(!len) return;
 	if(len === 1 && Type.isObject( args[0] ) ){
 		each(args[0], function(k, v){
