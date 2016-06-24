@@ -97,7 +97,7 @@ var	keys = Object.keys || function( o ){
 		return [];
 	},
 	indexOf = Array.prototype.indexOf || function(value){
-		if( Type.isArray( this ) ){
+		if( Type.isArray( toArray(this) ) ){
 			var ret = -1;
 			each(this, function(i, v){
 				if(v === value) ret = i;
@@ -109,7 +109,7 @@ var	keys = Object.keys || function( o ){
 	},
 	filter = Array.prototype.filter || function(fn){
 		var rets = [];
-		if( Type.isArray(this) ){
+		if( Type.isArray( toArray( this ) ) ){
 			each(this,function(i, v){
 				if( fn(v, i) ) rets.push(v);
 			});
@@ -191,24 +191,25 @@ if( 'classList' in cdiv ){
 		if( Type.isElement(d) && Type.isString(s) && s.length ) return d.classList.contains( s );
 	};
 	classList.addClass = function(d, s){
-		if( Type.isElement(d) && this.hasClass(d, s) === false ) d.classList.add( s );
+		if( this.hasClass(d, s) === false ) d.classList.add( s );
 	};
 	classList.removeClass = function(d, s){
-		if( Type.isElement(d) && this.hasClass(d, s) === true ) d.classList.remove( s );
+		if( this.hasClass(d, s) === true ) d.classList.remove( s );
 	};
 }else{
 	classList.hasClass = function(d, s){
 		if( Type.isElement(d) && Type.isString(s) && s.length )return !!d.className.match( new RegExp("(\\s|^)"+ s +"(\\s|$)") );
 	};
 	classList.addClass = function(d, s){
-		if( Type.isElement(d) && this.hasClass(d, s) === false ) d.className += ' ' + s;
+		if( this.hasClass(d, s) === false ) d.className += ' ' + s;
 	};
 	classList.removeClass = function(d, s){
-		if( Type.isElement(d) && this.hasClass(d, s) === true ) d.className = d.className.replace(new RegExp("(\\s|^)"+ s +"(\\s|$)"),' ');
+		if( this.hasClass(d, s) === true ) d.className = d.className.replace(new RegExp("(\\s|^)"+ s +"(\\s|$)"),' ');
 	};
 };
 classList.toggleClass = function(d, s){
-	if( Type.isElement(d) ) this[ this.hasClass(d, s) === false ? 'addClass' : 'removeClass' ](d, s);
+	var hasClass = this.hasClass(d, s);
+	if( Type.isBoolean( hasClass ) ) this[ hasClass === false ? 'addClass' : 'removeClass' ](d, s);
 };
 classList.replaceClass = function(d, os, ns){
 	if( Type.isElement(d) ){
@@ -320,6 +321,9 @@ Ej.extend({
 	remove : function(d){
 		return Type.isElement(d) && Type.isElement(d.parentNode) && d.parentNode.removeChild(d);
 	},
+	replace : function(newNode, oldNode){
+		return oldNode && Type.isElement( oldNode.parentNode ) && Type.isElement( newNode ) && oldNode.parentNode.replaceChild(newNode, oldNode);
+	},
 	contains : function(parent, child, containSelf){
 		if(!Type.isElement(parent) || !Type.isElement(child) ) return false;
 		if( (containSelf === 0 || containSelf === false) && parent === child) return false;
@@ -329,6 +333,18 @@ Ej.extend({
 		};
 		if(parent.contains) return parent.contains(child);
 		return false;
+	},
+	append : function(elem, parent){
+		return Type.isElement( elem ) && Type.isElement( parent ) && parent.appendChild( elem );
+	},
+	prepend : function(elem, parent){
+		return Type.isElement( elem ) && Type.isElement( parent ) && parent.insertBefore( elem, parent.firstChild );
+	},
+	before : function(elem, dom){
+		return dom && Type.isElement( dom.parentNode ) && Type.isElement( elem ) && dom.parentNode.insertBefore(elem, dom);
+	},
+	after : function(elem, dom){
+		return dom && Type.isElement( dom.parentNode ) && Type.isElement( elem ) && dom.parentNode.insertBefore(elem, dom.nextSibling);
 	},
 	index : function(dm, arr){
 		var _this = this, ret = -1;
@@ -529,5 +545,6 @@ Ej.extend({
 });
 
 w.Easy_js = w.Ej = Ej;
+
 })(window, document);
 
