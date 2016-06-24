@@ -30,7 +30,12 @@
 ## DOM
 		Ej.create(string, option); // 创建DOM，option => 添加dom属性、css属性 或 data-*
 		Ej.remove(dom); //移动dom
+		Ej.replace(newNode, oldNode); //替换DOM
 		Ej.contains(parent, child, containSelf); //判断元素 parent 是或包含 child
+		Ej.append(elem, parent); //向parent元素内 后面 追加DOM
+		Ej.prepend(elem, parent); //向parent元素内 前面 追加DOM
+		Ej.before(elem, dom); // 向DOM元素位置前 添加elem
+		Ej.after(elem, dom); //向DOM元素位置后 添加elem
 		Ej.index(Ej.index( dom, doms ); //判断dom 是或在 doms元素中，或在元素 子元素中
 		Ej.isHidden( dom ); //判断dom是或隐藏
 		Ej.siblings(dom, selector); // 获取dom的同级元素
