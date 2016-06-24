@@ -36,7 +36,7 @@
 		Ej.prepend(elem, parent); //向parent元素内 前面 追加DOM
 		Ej.before(elem, dom); // 向DOM元素位置前 添加elem
 		Ej.after(elem, dom); //向DOM元素位置后 添加elem
-		Ej.index(Ej.index( dom, doms ); //判断dom 是或在 doms元素中，或在元素 子元素中
+		Ej.index(elem, doms); //判断dom 是或在 doms元素中，或在元素 子元素中
 		Ej.isHidden( dom ); //判断dom是或隐藏
 		Ej.siblings(dom, selector); // 获取dom的同级元素
 
