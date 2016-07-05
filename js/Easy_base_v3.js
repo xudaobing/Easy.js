@@ -144,18 +144,23 @@ var	keys = Object.keys || function( o ){
 		isTransition : testCss('transition'),
 		isAnimation : testCss('animation'),
 		isrequestAni : w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.mozRequestAnimationFrame || false,
-		iscancelAni : w.cancelAnimationFrame || w.webkitCancelAnimationFrame ||  w.mozCancelAnimationFrame || false
+		iscancelAni : w.cancelAnimationFrame || w.webkitCancelAnimationFrame ||  w.mozCancelAnimationFrame || false,
+		matches : Element.prototype.matchesSelector ||
+					Element.prototype.mozMatchesSelector ||
+					Element.prototype.msMatchesSelector ||
+					Element.prototype.oMatchesSelector ||
+					Element.prototype.webkitMatchesSelector ||
+					function(s){
+						var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+							i = matches.length;
+						while (--i >= 0 && matches.item(i) !== this){};
+						return i > -1;            
+					}
+
 	};
 (function(){
 	support.isTransitionEnd = support.isTransition ? ( support.isTransition === 'transition' ? 'transitionend' : support.isTransition+'End') : false;
 	support.isAnimationEnd = support.isAnimation ? ( support.isAnimation === 'animation' ? 'animationend' : support.isAnimation+'End') : false;
-	var matches = ['webkitMatchesSelector','MozMatchesSelector','msMatchesSelector','oMatchesSelector','matchesSelector','matches'];
-	each(matches, function(k, v){
-		if(v in Element.prototype){
-			support.matches = v;
-			return false;
-		}
-	});
 }());
 
 function Ej(selector, context){
@@ -278,16 +283,9 @@ Ej.extend( event );
 Ej.extend({
 	qs : function(s, c){return (Type.isElement(c)?c:d).querySelector(s);},
 	qsa : function(s, c){return toArray( (Type.isElement(c)?c:d).querySelectorAll(s) );},
-	matches : function(d, s){
-		if(Type.isElement(d) && Type.isString(s) && s.length){
-			if( typeof( support.matches ) !== 'undefined' ){
-				return d[ support.matches ]( s );
-			}else{
-				var _qsa = this.qsa(s, d.parentNode);
-				return _qsa.length && indexOf.call(_qsa, d) >= 0;
-			};
-		};
-	},
+	//matches : function(d, s){
+	//	return Type.isElement( d ) && Type.isString(s) && s.length && support.matches.call(d, s);
+	//},
 	siblings : function(d, s){
 		if( !Type.isElement(d) ) return null;
 		var childs = toArray( d.parentNode.children ), rets = [], _this = this;
@@ -296,7 +294,7 @@ Ej.extend({
 		});
 		if( Type.isString(s) && s.length ){
 			rets = filter.call(rets, function(d){
-				return _this.matches(d, s);
+				return _this.matches.call(d, s);
 			});
 		};
 		return rets;
